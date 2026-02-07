@@ -148,49 +148,6 @@
             height: 200px;
             margin-top: 40px;
             width: 100%;
-            touch-action: none;
-        }
-        
-        .gif-strip {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-
-        .gif-strip img {
-            width: 200px;
-            border-radius: 15px;
-            display: block;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 24px;
-            }
-
-            h1 {
-                font-size: 2.2em;
-            }
-
-            .question {
-                font-size: 1.2em;
-                margin: 20px 0;
-            }
-
-            .buttons {
-                height: 240px;
-            }
-
-            button {
-                padding: 16px 36px;
-                font-size: 1.1em;
-            }
-
-            .gif-strip img {
-                width: 140px;
-            }
         }
 
         button {
@@ -336,11 +293,9 @@
     <div class="floating-hearts" id="floatingHearts"></div>
     <div class="container">
         <div id="questionSection">
-            <div class="gif-strip">
-                <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWVxMzZndjM0djFncXd2MGFrZGZpMHgzOGpkM2pwYXdhbHhxdGVjcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wrBURfbZmqqXu/giphy.gif" alt="Wink">
-                <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWdnb3BrYjZ2Nno2ejMwYjJqNDluY3BsbHB5bnc5dGxjbWZiMnFmYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOmQmJkjcvB3Bc8CRb/giphy.gif" alt="Wink">
-                <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGdvaGptY3E5bmY5N241emtzMXAwZzVjZXliOWNwNXlzMTlhZ3QzcSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/10UUe8ZsLnaqwo/giphy.gif" alt="Wink">
-            </div>
+            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExcWVxMzZndjM0djFncXd2MGFrZGZpMHgzOGpkM2pwYXdhbHhxdGVjcSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/wrBURfbZmqqXu/giphy.gif" alt="Wink" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
+            <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExbWdnb3BrYjZ2Nno2ejMwYjJqNDluY3BsbHB5bnc5dGxjbWZiMnFmYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/jOmQmJkjcvB3Bc8CRb/giphy.gif" alt="Wink" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGdvaGptY3E5bmY5N241emtzMXAwZzVjZXliOWNwNXlzMTlhZ3QzcSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/10UUe8ZsLnaqwo/giphy.gif" alt="Wink" style="width: 200px; border-radius: 15px; margin-bottom: 20px;">
             <h1>Hey Hibah Ahsan!</h1>
             <p class="question">Will you be my Valentine?</p>
             
@@ -386,7 +341,6 @@
         const questionSection = document.getElementById('questionSection');
         const celebration = document.getElementById('celebration');
         const insultText = document.getElementById('insultText');
-        updateRects();
 
         const animalInsults = [
             "Don't be a silly goose!",
@@ -418,31 +372,20 @@
 
         let lastInsultIndex = -1;
 
-        let rafPending = false;
-        let lastPointer = { x: 0, y: 0 };
-        let cachedContainerRect = null;
-        let cachedBtnRect = null;
-
-        function updateRects() {
-            const container = document.querySelector('.buttons');
-            cachedContainerRect = container.getBoundingClientRect();
-            cachedBtnRect = noBtn.getBoundingClientRect();
-        }
-
-        // Function to move the No button away from pointer
-        function moveButton(pointerX, pointerY) {
-            if (!cachedContainerRect || !cachedBtnRect) {
-                updateRects();
-            }
-            const btnRect = cachedBtnRect;
-            const containerRect = cachedContainerRect;
+        // Function to move the No button away from cursor
+        function moveButton(e) {
+            const btnRect = noBtn.getBoundingClientRect();
+            const containerRect = document.querySelector('.buttons').getBoundingClientRect();
             
             const btnCenterX = btnRect.left + btnRect.width / 2;
             const btnCenterY = btnRect.top + btnRect.height / 2;
             
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            
             const distance = Math.sqrt(
-                Math.pow(pointerX - btnCenterX, 2) + 
-                Math.pow(pointerY - btnCenterY, 2)
+                Math.pow(mouseX - btnCenterX, 2) + 
+                Math.pow(mouseY - btnCenterY, 2)
             );
             
             // If cursor is within 100px of the button, move it and show insult
@@ -455,7 +398,7 @@
                 lastInsultIndex = newIndex;
                 insultText.textContent = animalInsults[newIndex];
                 
-                const angle = Math.atan2(btnCenterY - pointerY, btnCenterX - pointerX);
+                const angle = Math.atan2(btnCenterY - mouseY, btnCenterX - mouseX);
                 const moveDistance = 100;
                 
                 let newX = btnCenterX + Math.cos(angle) * moveDistance;
@@ -477,66 +420,14 @@
                 noBtn.style.left = `${relativeX}px`;
                 noBtn.style.top = `${relativeY}px`;
                 noBtn.style.transform = 'none';
-                cachedBtnRect = noBtn.getBoundingClientRect();
             } else {
                 // Clear insult when cursor is far away
                 insultText.textContent = '';
             }
         }
 
-        function onMove(x, y) {
-            lastPointer.x = x;
-            lastPointer.y = y;
-            if (rafPending) return;
-            rafPending = true;
-            requestAnimationFrame(() => {
-                rafPending = false;
-                moveButton(lastPointer.x, lastPointer.y);
-            });
-        }
-
-        function onPointerMove(e) {
-            onMove(e.clientX, e.clientY);
-        }
-
-        function onTouchMove(e) {
-            if (!e.touches || e.touches.length === 0) return;
-            const t = e.touches[0];
-            onMove(t.clientX, t.clientY);
-        }
-
-        // Add event listeners for cursor/touch movement
-        document.addEventListener('pointermove', onPointerMove, { passive: true });
-        document.addEventListener('mousemove', onPointerMove, { passive: true });
-        document.addEventListener('touchmove', onTouchMove, { passive: true });
-
-        const buttonsContainer = document.querySelector('.buttons');
-        buttonsContainer.addEventListener('pointerdown', (e) => {
-            onMove(e.clientX, e.clientY);
-            jumpNoButtonRandom();
-        }, { passive: true });
-
-        buttonsContainer.addEventListener('touchstart', (e) => {
-            if (!e.touches || e.touches.length === 0) return;
-            const t = e.touches[0];
-            onMove(t.clientX, t.clientY);
-            jumpNoButtonRandom();
-        }, { passive: true });
-
-        window.addEventListener('resize', updateRects);
-
-        function jumpNoButtonRandom() {
-            const containerRect = document.querySelector('.buttons').getBoundingClientRect();
-            const btnRect = noBtn.getBoundingClientRect();
-            const maxX = containerRect.width - btnRect.width;
-            const maxY = containerRect.height - btnRect.height;
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-            noBtn.style.left = `${randomX}px`;
-            noBtn.style.top = `${randomY}px`;
-            noBtn.style.transform = 'none';
-            cachedBtnRect = noBtn.getBoundingClientRect();
-        }
+        // Add event listeners for cursor movement
+        document.addEventListener('mousemove', moveButton);
 
         // Handle No button click (also makes it jump away)
         noBtn.addEventListener('click', function() {
@@ -548,13 +439,19 @@
             lastInsultIndex = newIndex;
             insultText.textContent = animalInsults[newIndex];
             
-            jumpNoButtonRandom();
+            const containerRect = document.querySelector('.buttons').getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            
+            const maxX = containerRect.width - btnRect.width;
+            const maxY = containerRect.height - btnRect.height;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+            noBtn.style.transform = 'none';
         });
-
-        // Make sure a tap on the button triggers movement on mobile
-        noBtn.addEventListener('touchstart', function() {
-            jumpNoButtonRandom();
-        }, { passive: true });
 
         // Handle Yes button click
         yesBtn.addEventListener('click', function(event) {
