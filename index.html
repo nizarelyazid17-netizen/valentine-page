@@ -513,15 +513,30 @@
         const buttonsContainer = document.querySelector('.buttons');
         buttonsContainer.addEventListener('pointerdown', (e) => {
             onMove(e.clientX, e.clientY);
+            jumpNoButtonRandom();
         }, { passive: true });
 
         buttonsContainer.addEventListener('touchstart', (e) => {
             if (!e.touches || e.touches.length === 0) return;
             const t = e.touches[0];
             onMove(t.clientX, t.clientY);
+            jumpNoButtonRandom();
         }, { passive: true });
 
         window.addEventListener('resize', updateRects);
+
+        function jumpNoButtonRandom() {
+            const containerRect = document.querySelector('.buttons').getBoundingClientRect();
+            const btnRect = noBtn.getBoundingClientRect();
+            const maxX = containerRect.width - btnRect.width;
+            const maxY = containerRect.height - btnRect.height;
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+            noBtn.style.transform = 'none';
+            cachedBtnRect = noBtn.getBoundingClientRect();
+        }
 
         // Handle No button click (also makes it jump away)
         noBtn.addEventListener('click', function() {
@@ -533,33 +548,12 @@
             lastInsultIndex = newIndex;
             insultText.textContent = animalInsults[newIndex];
             
-            const containerRect = document.querySelector('.buttons').getBoundingClientRect();
-            const btnRect = noBtn.getBoundingClientRect();
-            
-            const maxX = containerRect.width - btnRect.width;
-            const maxY = containerRect.height - btnRect.height;
-            
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-            
-            noBtn.style.left = `${randomX}px`;
-            noBtn.style.top = `${randomY}px`;
-            noBtn.style.transform = 'none';
-            cachedBtnRect = noBtn.getBoundingClientRect();
+            jumpNoButtonRandom();
         });
 
-        // Make sure a tap near the button also triggers movement on mobile
+        // Make sure a tap on the button triggers movement on mobile
         noBtn.addEventListener('touchstart', function() {
-            const containerRect = document.querySelector('.buttons').getBoundingClientRect();
-            const btnRect = noBtn.getBoundingClientRect();
-            const maxX = containerRect.width - btnRect.width;
-            const maxY = containerRect.height - btnRect.height;
-            const randomX = Math.random() * maxX;
-            const randomY = Math.random() * maxY;
-            noBtn.style.left = `${randomX}px`;
-            noBtn.style.top = `${randomY}px`;
-            noBtn.style.transform = 'none';
-            cachedBtnRect = noBtn.getBoundingClientRect();
+            jumpNoButtonRandom();
         }, { passive: true });
 
         // Handle Yes button click
